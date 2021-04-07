@@ -1,11 +1,7 @@
 package ru.itlab.cms.config;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -13,6 +9,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import ru.itlab.cms.ascpects.LoggingAspect;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -22,6 +19,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"ru.itlab.cms"})
 @EnableJpaRepositories(basePackages = {"ru.itlab.cms.repository"})
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @PropertySource("classpath:/app.properties")
 public class RootConfig {
 
@@ -70,5 +68,10 @@ public class RootConfig {
         properties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("hibernate.enable_lazy_load_no_trans"));
 
         return properties;
+    }
+
+    @Bean
+    public LoggingAspect loggingAspect() {
+        return new LoggingAspect();
     }
 }

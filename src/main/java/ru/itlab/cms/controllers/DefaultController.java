@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.itlab.cms.ascpects.LoggingAspect;
 import ru.itlab.cms.models.Article;
 import ru.itlab.cms.services.ArticleServiceImpl;
 import ru.itlab.cms.services.TagServiceImpl;
@@ -39,6 +40,9 @@ public class DefaultController {
     private HttpServletRequest request;
     @Autowired
     private HttpServletResponse response;
+
+    @Autowired
+    private LoggingAspect loggingAspect;
 
     private MessageSourceAccessor msa;
     private String code;
