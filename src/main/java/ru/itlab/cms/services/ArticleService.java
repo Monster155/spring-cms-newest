@@ -1,5 +1,6 @@
 package ru.itlab.cms.services;
 
+import ru.itlab.cms.annotations.AfterReturningLog;
 import ru.itlab.cms.models.Article;
 
 import java.util.List;
@@ -15,5 +16,6 @@ public interface ArticleService {
 
     Article editText(Article article);
 
+    @AfterReturningLog
     List<Article> getAll();
 }

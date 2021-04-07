@@ -96,6 +96,12 @@
             <artifactId>aspectjweaver</artifactId>
             <version>1.6.11</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -9,7 +9,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -25,8 +24,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ViewResolver viewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/WEB-INF/jsp/"); // folder in webapp
+//        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        CustomViewResolver resolver = new CustomViewResolver();
+        resolver.setPrefix("/WEB-INF/jsp/");
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
         resolver.setRedirectContextRelative(false);

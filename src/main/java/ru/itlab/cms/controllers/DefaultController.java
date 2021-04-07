@@ -83,18 +83,19 @@ public class DefaultController {
     public String index(@RequestParam(name = "pageNum", defaultValue = "0") Integer pageNum,
                         @RequestParam(name = "pageLimit", defaultValue = "5") Integer pageLimit,
                         ModelMap map) {
-        List<Article> articles = articleService.getAll();
-        pageNum--; // it gets first page like 1 instead of 0 (url needs 1)
-        if (pageNum < 0) pageNum = 0;
-        if (pageLimit < 1) pageLimit = 1;
-        int pagesCount = (articles.size() + pageLimit - 1) / pageLimit;
-        map.put("pagesCount", pagesCount);
-        map.put("limit", pageLimit);
-        if (pageNum >= pagesCount) System.out.println();
-        else if ((pageNum + 1) * pageLimit >= articles.size())
-            map.put("allPages", articles.subList(pageNum * pageLimit, articles.size()));
-        else map.put("allPages", articles.subList(pageNum * pageLimit, (pageNum + 1) * pageLimit));
-        return "view";
+        return "status:404";
+//        List<Article> articles = articleService.getAll();
+//        pageNum--; // it gets first page like 1 instead of 0 (url needs 1)
+//        if (pageNum < 0) pageNum = 0;
+//        if (pageLimit < 1) pageLimit = 1;
+//        int pagesCount = (articles.size() + pageLimit - 1) / pageLimit;
+//        map.put("pagesCount", pagesCount);
+//        map.put("limit", pageLimit);
+//        if (pageNum >= pagesCount) System.out.println();
+//        else if ((pageNum + 1) * pageLimit >= articles.size())
+//            map.put("allPages", articles.subList(pageNum * pageLimit, articles.size()));
+//        else map.put("allPages", articles.subList(pageNum * pageLimit, (pageNum + 1) * pageLimit));
+//        return "view";
     }
 
     @RequestMapping(value = "/twitch_access")
