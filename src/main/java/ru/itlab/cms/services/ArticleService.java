@@ -16,6 +16,6 @@ public interface ArticleService {
 
     Article editText(Article article);
 
-    @AfterReturningLog
+//    @AfterReturningLog
     List<Article> getAll();
 }

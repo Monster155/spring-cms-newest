@@ -19,7 +19,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"ru.itlab.cms"})
 @EnableJpaRepositories(basePackages = {"ru.itlab.cms.repository"})
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+//@EnableAspectJAutoProxy(proxyTargetClass = true)
 @PropertySource("classpath:/app.properties")
 public class RootConfig {
 
@@ -70,8 +70,8 @@ public class RootConfig {
         return properties;
     }
 
-    @Bean
-    public LoggingAspect loggingAspect() {
-        return new LoggingAspect();
-    }
+//    @Bean
+//    public LoggingAspect loggingAspect() {
+//        return new LoggingAspect();
+//    }
 }

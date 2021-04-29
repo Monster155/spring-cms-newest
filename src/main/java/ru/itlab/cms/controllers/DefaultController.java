@@ -6,14 +6,10 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.itlab.cms.ascpects.LoggingAspect;
 import ru.itlab.cms.models.Article;
 import ru.itlab.cms.services.ArticleServiceImpl;
 import ru.itlab.cms.services.TagServiceImpl;
@@ -22,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -41,8 +38,8 @@ public class DefaultController {
     @Autowired
     private HttpServletResponse response;
 
-    @Autowired
-    private LoggingAspect loggingAspect;
+//    @Autowired
+//    private LoggingAspect loggingAspect;
 
     private MessageSourceAccessor msa;
     private String code;
@@ -83,19 +80,30 @@ public class DefaultController {
     public String index(@RequestParam(name = "pageNum", defaultValue = "0") Integer pageNum,
                         @RequestParam(name = "pageLimit", defaultValue = "5") Integer pageLimit,
                         ModelMap map) {
+        List<Article> articles = articleService.getAll();
+        if (articles.size() == 0) return "view";
+        pageNum--; // it gets first page like 1 instead of 0 (url needs 1)
+        if (pageNum < 0) pageNum = 0;
+        if (pageLimit < 1) pageLimit = 1;
+        int pagesCount = (articles.size() + pageLimit - 1) / pageLimit;
+        map.put("pagesCount", pagesCount);
+        map.put("limit", pageLimit);
+        if (pageNum >= pagesCount) System.out.println(); // write log
+        else if ((pageNum + 1) * pageLimit >= articles.size())
+            map.put("allPages", articles.subList(pageNum * pageLimit, articles.size()));
+        else map.put("allPages", articles.subList(pageNum * pageLimit, (pageNum + 1) * pageLimit));
+        return "view";
+    }
+
+    @RequestMapping(value = "/home")
+    public String home(ModelMap map) {
+        map.put("code", "This is home page");
+        return "code";
+    }
+
+    @RequestMapping(value = "/404")
+    public String errorPage() {
         return "status:404";
-//        List<Article> articles = articleService.getAll();
-//        pageNum--; // it gets first page like 1 instead of 0 (url needs 1)
-//        if (pageNum < 0) pageNum = 0;
-//        if (pageLimit < 1) pageLimit = 1;
-//        int pagesCount = (articles.size() + pageLimit - 1) / pageLimit;
-//        map.put("pagesCount", pagesCount);
-//        map.put("limit", pageLimit);
-//        if (pageNum >= pagesCount) System.out.println();
-//        else if ((pageNum + 1) * pageLimit >= articles.size())
-//            map.put("allPages", articles.subList(pageNum * pageLimit, articles.size()));
-//        else map.put("allPages", articles.subList(pageNum * pageLimit, (pageNum + 1) * pageLimit));
-//        return "view";
     }
 
     @RequestMapping(value = "/twitch_access")
@@ -138,6 +146,27 @@ public class DefaultController {
         return "editor";
     }
 
+    @GetMapping("/validationCheck")
+    @ResponseBody
+    public Result validationCheck(@ModelAttribute Article article) {
+        return checkArticle(article);
+    }
+
+    private Result checkArticle(Article article) {
+        Result result = new Result();
+        if (article.getName().length() < 3)
+            result.addError(new Error("Article name", "Article name is too short"));
+        else if (article.getName().length() > 30)
+            result.addError(new Error("Article name", "Article name is too long"));
+        if (article.getAuthor().length() < 3)
+            result.addError(new Error("Author name", "Author name is too short"));
+        else if (article.getAuthor().length() > 30)
+            result.addError(new Error("Author name", "Author name is too long"));
+
+        result.setStatus(result.getErrors().isEmpty());
+        return result;
+    }
+
     @RequestMapping("/change")
     public String change(@RequestParam String locale, HttpServletRequest req) {
         String referer = req.getHeader("Referer");
@@ -151,5 +180,48 @@ public class DefaultController {
         map.put("text", article.getText());
         map.put("date", new SimpleDateFormat("dd/MM/yyyy hh:mm").format(new Date(article.getDate().getTime())));
         map.put("author", article.getAuthor());
+    }
+
+    private class Result {
+        private boolean status;
+        private ArrayList<Error> errors;
+
+        public Result() {
+            errors = new ArrayList<>();
+        }
+
+        public boolean isStatus() {
+            return status;
+        }
+
+        public void setStatus(boolean status) {
+            this.status = status;
+        }
+
+        public ArrayList<Error> getErrors() {
+            return errors;
+        }
+
+        public void addError(Error error) {
+            this.errors.add(error);
+        }
+    }
+
+    private class Error {
+        private String name;
+        private String message;
+
+        public Error(String name, String message) {
+            this.name = name;
+            this.message = message;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

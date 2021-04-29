@@ -2,7 +2,6 @@ package ru.itlab.cms.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.itlab.cms.models.Article;
 import ru.itlab.cms.repository.ArticleRepo;
 
@@ -42,7 +41,7 @@ public class ArticleServiceImpl implements ArticleService {
     //returns old version of article
     public Article editText(Article article) {
         Article oldArticle = articleRepo.findArticle(article.getName(), article.getAuthor());
-        articleRepo.saveAndFlush(article);
+        System.out.println(articleRepo.saveAndFlush(article));
         return oldArticle;
     }
 

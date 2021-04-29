@@ -30,7 +30,7 @@ public class Article implements Serializable {
     @CreationTimestamp
 //    @Column(insertable = false)
     private java.sql.Timestamp date;
-//    @Lob
+    @Column(columnDefinition = "text")
     @NotEmpty(message = "Text can not be empty")
     private String text;
     @ManyToMany(cascade = CascadeType.MERGE)
